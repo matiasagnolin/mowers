@@ -16,6 +16,7 @@ public class MowerControlServiceTest {
 
     private Ground ground;
     private static final String PATHTOFILE="src/test/resources/input.txt";
+
     @Before
     public void init(){
         ground = new Ground(5,5);
