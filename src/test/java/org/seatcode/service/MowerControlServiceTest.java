@@ -3,50 +3,48 @@ package org.seatcode.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.seatcode.domain.Ground;
-import org.seatcode.domain.LawnMower;
-import org.seatcode.domain.Orientation;
-import org.seatcode.domain.Position;
+import org.seatcode.domain.*;
 
 public class MowerControlServiceTest {
 
     private Ground ground;
-    private LawnMower mower;
-    private MowerControlService control;
 
     @Before
     public void init(){
-        //ground = new Ground(5,5,N);
+        ground = new Ground(5,5);
     }
-    @Test
-    public void getMowerToInitialPosition(){
-        Assert.assertTrue(mower.goToInitialPosition().equals(
-                                new Position(0,0,Orientation.NORTH)));
+
+    private MowerControlService newControl(){
+        LawnMower mower = new LawnMower(0,0,Orientation.NORTH);
+        mower.setGround(ground);
+        MowerControlService control = new MowerControlService(mower);
+        return control;
     }
+
+
     @Test
     public void mowerTurnRight(){
-        mower.goToInitialPosition();
-        control.turnRight();
-        Assert.assertTrue(mower.getPosition().getOrtientation().equals(Orientation.EAST));
+        MowerControlService control = newControl();
+
+        control.makeMovements(Movements.R);
+        Assert.assertTrue(control.getMower().
+                getCurrentPosition().getOrientation().equals(Orientation.EAST));
     }
     @Test
     public void mowerTurnLeft(){
-        mower.goToInitialPosition();
-        control.turnLeft();
-        Assert.assertTrue(mower.getPosition().getOrtientation().equals(Orientation.EAST));
+        MowerControlService control = newControl();
+
+        control.makeMovements(Movements.L);
+        Assert.assertTrue(control.getMower()
+                .getCurrentPosition().getOrientation().equals(Orientation.WEST));
     }
     @Test
     public void mowerGoAhead(){
-        mower.goToInitialPosition();
-        control.goForward();
-        Assert.assertTrue(mower.getPosition().getOrtientation().equals(Orientation.EAST));
-    }
-    @Test
-    public void mowerInitialPosition(){
+        MowerControlService control = newControl();
 
+        control.makeMovements(Movements.M);
+        Assert.assertTrue(control.getMower().
+                getCurrentPosition().getY().equals(1));
     }
-    @Test
-    public void mowerAtRightTopPosition(){
 
-    }
 }
