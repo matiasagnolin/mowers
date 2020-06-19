@@ -12,7 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MowerControlService {
-    LawnMower mower;
+    private LawnMower mower;
+    private List<Movements> followingMovements;
 
     public MowerControlService(LawnMower mower){
         this.mower = mower;
@@ -36,7 +37,7 @@ public class MowerControlService {
             }
     }
 
-    public void makeMovements(Movements ... movements){
+    public MowerControlService makeMovements(Movements ... movements){
         List<ICommand> executions = new ArrayList<>();
 
         Arrays.asList(movements).forEach(mv -> {
@@ -44,6 +45,8 @@ public class MowerControlService {
         });
 
         executions.forEach(e -> mower.execute(e));
+
+        return this;
     }
 
     public LawnMower getMower() {
@@ -54,6 +57,11 @@ public class MowerControlService {
         this.mower = mower;
     }
 
+    public List<Movements> getFollowingMovements() {
+        return followingMovements;
+    }
 
-
+    public void setFollowingMovements(List<Movements> followingMovements) {
+        this.followingMovements = followingMovements;
+    }
 }

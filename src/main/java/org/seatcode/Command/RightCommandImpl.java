@@ -5,7 +5,8 @@ import org.seatcode.domain.Position;
 
 public class RightCommandImpl implements ICommand {
     @Override
-    public void execute(Position position) {
+    public Position execute(Position position) {
+        Position newPosition = position.clone();
         Orientation orientation;
 
         switch(position.getOrientation()){
@@ -21,6 +22,10 @@ public class RightCommandImpl implements ICommand {
             default:
                 orientation = Orientation.NORTH;
         }
-        position.setOrientation(orientation);
+        newPosition.setOrientation(orientation);
+
+        return newPosition;
+
+
     }
 }

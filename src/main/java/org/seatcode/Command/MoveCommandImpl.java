@@ -5,8 +5,8 @@ import org.seatcode.domain.Position;
 public class MoveCommandImpl implements ICommand {
 
     @Override
-    public void execute(Position position) {
-
+    public Position execute(Position position) {
+        Position newPosition = position.clone();
         int x, y = x = 0;
 
         switch(position.getOrientation())
@@ -25,8 +25,10 @@ public class MoveCommandImpl implements ICommand {
                 break;
         }
 
-        position.setX(position.getX() + x);
-        position.setY(position.getY() + y);
+        newPosition.setX(position.getX() + x);
+        newPosition.setY(position.getY() + y);
+
+        return newPosition;
 
     }
 }

@@ -13,15 +13,13 @@ public class LawnMower {
         this.currentPosition = new Position(x,y,orientation);
     }
 
-    public Position goToIntialPosition(){
-
-        return getCurrentPosition();
-    }
-
-
-    public void execute(ICommand command)
-    {
-        command.execute(this.currentPosition);
+    public void execute(ICommand command) throws IndexOutOfBoundsException{
+        Position pos = command.execute(this.currentPosition);
+        if(ground.lengthValidation(pos.getX(),pos.getY())){
+            setCurrentPosition(pos);
+        } else{
+            throw new IndexOutOfBoundsException("Invalid Arguments");
+        }
     }
 
 

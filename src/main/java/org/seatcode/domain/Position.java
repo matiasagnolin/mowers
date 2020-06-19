@@ -1,9 +1,13 @@
 package org.seatcode.domain;
 
+import javafx.geometry.Pos;
+
+import java.util.Objects;
+
 public class Position {
-    Orientation orientation;
-    Integer x;
-    Integer y;
+    private Orientation orientation;
+    private Integer x;
+    private Integer y;
 
     public Position(Integer x, Integer y, Orientation orientation){
         this.orientation = orientation;
@@ -33,5 +37,24 @@ public class Position {
 
     public void setY(Integer y) {
         this.y = y;
+    }
+
+    public Position clone(){
+        return new Position(getX(),getY(),getOrientation());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Position position = (Position) o;
+        return orientation == position.orientation &&
+                Objects.equals(x, position.x) &&
+                Objects.equals(y, position.y);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orientation, x, y);
     }
 }
