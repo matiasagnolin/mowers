@@ -1,7 +1,5 @@
 package org.seatcode.domain;
 
-import javafx.geometry.Pos;
-
 import java.util.Objects;
 
 public class Position {

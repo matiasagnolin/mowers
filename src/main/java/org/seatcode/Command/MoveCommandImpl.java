@@ -11,16 +11,16 @@ public class MoveCommandImpl implements ICommand {
 
         switch(position.getOrientation())
         {
-            case NORTH:
+            case N:
                 y = 1;
                 break;
-            case SOUTH:
+            case S:
                 y = -1;
                 break;
-            case EAST:
+            case E:
                 x = 1;
                 break;
-            case WEST:
+            case W:
                 x = -1;
                 break;
         }

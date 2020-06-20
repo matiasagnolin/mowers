@@ -1,5 +1,7 @@
 package org.seatcode.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.seatcode.Command.ICommand;
 import org.seatcode.Command.LeftCommandImpl;
 import org.seatcode.Command.MoveCommandImpl;
@@ -8,12 +10,13 @@ import org.seatcode.domain.LawnMower;
 import org.seatcode.domain.Movements;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MowerControlService {
     private LawnMower mower;
     private List<Movements> followingMovements;
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(MowerControlService.class);
 
     public MowerControlService(LawnMower mower){
         this.mower = mower;
@@ -37,14 +40,27 @@ public class MowerControlService {
             }
     }
 
-    public MowerControlService makeMovements(Movements ... movements){
-        List<ICommand> executions = new ArrayList<>();
+    public MowerControlService makeMovements(List<Movements>  movements) {
+        try {
+            mower.getGround().acquire();
+            List<ICommand> executions = new ArrayList<>();
 
-        Arrays.asList(movements).forEach(mv -> {
-            addExecutions(executions, mv);
-        });
+            movements.forEach(mv -> {
+                addExecutions(executions, mv);
+            });
 
-        executions.forEach(e -> mower.execute(e));
+            executions.forEach(e -> mower.execute(e));
+
+        }catch (InterruptedException e){
+            LOGGER.error("THREAD INTERRUPTED ",e.getMessage());
+
+        }finally {
+            mower.getGround().release();
+            LOGGER.info("MOWER FINISHED at x{} y{} Direction {}."
+                    ,mower.getCurrentPosition().getX()
+                    ,mower.getCurrentPosition().getY()
+                    ,mower.getCurrentPosition().getOrientation());
+        }
 
         return this;
     }

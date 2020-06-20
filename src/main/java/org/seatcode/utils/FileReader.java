@@ -16,7 +16,7 @@ import java.util.List;
 import static java.lang.Integer.parseInt;
 
 public class FileReader {
-    public static String[] parserEnvironmentSetupFile(File f) throws IOException
+    private static String[] readRawFile(File f) throws IOException
     {
         List<String> lines = new ArrayList<>();
 
@@ -32,16 +32,16 @@ public class FileReader {
         return lines.toArray(new String[lines.size()]);
     }
 
-    public static MowerControlService parseInputFile(File f) throws IOException
+    public static List<MowerControlService> parseInputFile(File f) throws IOException
     {
         final List<MowerControlService> result = new ArrayList<>();
-        final String[] lines = parserEnvironmentSetupFile(f);
+        final String[] lines = readRawFile(f);
 
         if (lines.length > 0)
         {
             String[] dimensions = lines[0].split(" ");
 
-            final Ground g = new Ground(parseInt(dimensions[0].trim()), parseInt(dimensions[1].trim()));
+            final Ground g = new Ground(parseInt(dimensions[0].trim())+1, parseInt(dimensions[1].trim())+1);
 
             for (int i = 1; i < lines.length; i += 2) {
                 String[] position = lines[i].split(" ");
@@ -55,11 +55,11 @@ public class FileReader {
                 lawnmower.setGround(g);
                 MowerControlService mower = new MowerControlService(lawnmower);
                 mower.setFollowingMovements(Arrays.asList(parseMovements(lines[i + 1])));
-                return mower;
+                result.add(mower);
             }
         }
 
-        return null;
+        return result;
     }
 
     private static Movements[] parseMovements(String line)

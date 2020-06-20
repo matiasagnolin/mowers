@@ -1,13 +1,14 @@
 package org.seatcode;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.cli.*;
-import org.seatcode.domain.LawnMower;
 import org.seatcode.service.MowerControlService;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.seatcode.utils.FileReader.parseInputFile;
 
@@ -23,15 +24,33 @@ public class App {
     public static void main( String[] args ) {
         String path = validateAndParserArgs(args);
 
-         File file = new File(path);
-        MowerControlService control;
-
+        File file = new File(path);
+        List<MowerControlService> list = new ArrayList<>();
         try {
+            list = parseInputFile(file);
+            for (MowerControlService con : list) {
+                new Thread(() -> {
+                    LOGGER.info("Mower Deployed at x{} and y{}"
+                            ,con.getMower().getCurrentPosition().getX()
+                            ,con.getMower().getCurrentPosition().getY()
+                    );
+                    con.makeMovements(con.getFollowingMovements());
+                }).start();
+            }
+        } catch (IOException  e) {
+            LOGGER.error("A critical error has occurred: {}"
+                    ,e.getMessage());
+        }
+
+
+
+
+/*        try {
             control = parseInputFile(file);
             control.getFollowingMovements().forEach(e->control.makeMovements(e));
         } catch (IOException | IndexOutOfBoundsException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
     }

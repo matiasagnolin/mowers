@@ -4,11 +4,14 @@ import org.seatcode.Command.ICommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 public class LawnMower {
 
     private Position initialPosition;
     private Position currentPosition;
     private Ground ground;
+
     private static final Logger LOGGER =
             LoggerFactory.getLogger(LawnMower.class);
 
@@ -18,13 +21,15 @@ public class LawnMower {
     }
 
     public void execute(ICommand command) throws IndexOutOfBoundsException{
-        Position pos = command.execute(this.currentPosition);
+        Position pos = command.execute(currentPosition);
         if(ground.lengthValidation(pos.getX(),pos.getY())){
             LOGGER.info("Mower changed position: x{} y{} Orientation {}"
                     ,pos.getX(),pos.getY(),pos.getOrientation());
             setCurrentPosition(pos);
         } else{
-            throw new IndexOutOfBoundsException("Invalid Arguments");
+            LOGGER.error("A critical error has occurred, " +
+                    "the program is going to stop");
+            throw new IllegalArgumentException("Please check input arguments");
         }
     }
 
@@ -51,5 +56,20 @@ public class LawnMower {
 
     public void setGround(Ground ground) {
         this.ground = ground;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LawnMower lawnMower = (LawnMower) o;
+        return Objects.equals(initialPosition, lawnMower.initialPosition) &&
+                Objects.equals(currentPosition, lawnMower.currentPosition) &&
+                Objects.equals(ground, lawnMower.ground);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(initialPosition, currentPosition, ground);
     }
 }

@@ -10,17 +10,17 @@ public class RightCommandImpl implements ICommand {
         Orientation orientation;
 
         switch(position.getOrientation()){
-            case NORTH:
-                orientation = Orientation.EAST;
+            case N:
+                orientation = Orientation.E;
                 break;
-            case SOUTH:
-                orientation = Orientation.WEST;
+            case S:
+                orientation = Orientation.W;
                 break;
-            case EAST:
-                orientation = Orientation.SOUTH;
+            case E:
+                orientation = Orientation.S;
                 break;
             default:
-                orientation = Orientation.NORTH;
+                orientation = Orientation.N;
         }
         newPosition.setOrientation(orientation);
 

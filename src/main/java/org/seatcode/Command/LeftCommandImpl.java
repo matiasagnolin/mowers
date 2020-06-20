@@ -10,17 +10,17 @@ public class LeftCommandImpl implements ICommand {
         Orientation orientation;
 
         switch(position.getOrientation()){
-            case NORTH:
-                orientation = Orientation.WEST;
+            case N:
+                orientation = Orientation.W;
                 break;
-            case SOUTH:
-                orientation = Orientation.EAST;
+            case S:
+                orientation = Orientation.E;
                 break;
-            case WEST:
-                orientation = Orientation.SOUTH;
+            case W:
+                orientation = Orientation.S;
                 break;
             default:
-                orientation = Orientation.NORTH;
+                orientation = Orientation.N;
         }
         newPosition.setOrientation(orientation);
 

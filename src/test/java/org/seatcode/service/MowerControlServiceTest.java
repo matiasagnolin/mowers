@@ -4,12 +4,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.seatcode.domain.*;
-import org.seatcode.utils.FileReader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.seatcode.domain.Movements.M;
 import static org.seatcode.utils.FileReader.parseInputFile;
 
 public class MowerControlServiceTest {
@@ -19,61 +19,80 @@ public class MowerControlServiceTest {
 
     @Before
     public void init(){
-        ground = new Ground(5,5);
+        ground = new Ground(6,6);
     }
 
-    private MowerControlService newControl(Integer x, Integer y,Orientation orientation){
-        LawnMower mower = new LawnMower(x,y,orientation);
+    private MowerControlService newControl(Integer x, Integer y){
+        LawnMower mower = new LawnMower(x,y, Orientation.N);
         mower.setGround(ground);
-        MowerControlService control = new MowerControlService(mower);
-        return control;
+        return new MowerControlService(mower);
     }
 
     @Test
-    public void mowerTurnRight(){
-        MowerControlService control = newControl(0,0,Orientation.NORTH);
+    public void mowerTurnRight()  {
+        MowerControlService control = newControl(0,0);
+        List<Movements> list = new ArrayList<>();
+        list.add(Movements.R);
 
-        control.makeMovements(Movements.R);
-        Assert.assertTrue(control.getMower().
-                getCurrentPosition().getOrientation().equals(Orientation.EAST));
+        control.makeMovements(list);
+        Assert.assertEquals(control.getMower().
+                getCurrentPosition().getOrientation(), Orientation.E);
     }
     @Test
-    public void mowerTurnLeft(){
-        MowerControlService control = newControl(0,0,Orientation.NORTH);
-
-        control.makeMovements(Movements.L);
-        Assert.assertTrue(control.getMower()
-                .getCurrentPosition().getOrientation().equals(Orientation.WEST));
+    public void mowerTurnLeft()  {
+        MowerControlService control = newControl(0,0);
+        List<Movements> list = new ArrayList<>();
+        list.add(Movements.L);
+        control.makeMovements(list);
+        Assert.assertEquals(control.getMower()
+                .getCurrentPosition().getOrientation(), Orientation.W);
     }
     @Test
-    public void mowerGoAhead(){
-        MowerControlService control = newControl(0,0,Orientation.NORTH);
-
-        control.makeMovements(M);
-        Assert.assertTrue(control.getMower().
-                getCurrentPosition().getY().equals(1));
+    public void mowerGoAhead()  {
+        MowerControlService control = newControl(0,0);
+        List<Movements> list = new ArrayList<>();
+        list.add(Movements.M);
+        control.makeMovements(list);
+        Assert.assertEquals(1, (int) control.getMower().
+                getCurrentPosition().getY());
     }
     @Test
-    public void mowerKeepRightPosition(){
-        MowerControlService control = newControl(5,5,Orientation.NORTH);
-        control.makeMovements(M);
-        Assert.assertTrue(control.getMower()
-                .getCurrentPosition().equals(new Position(5,5,Orientation.NORTH)));
+    public void goToTopRight(){
+        MowerControlService control = newControl(0,0);
+        List<Movements> list = new ArrayList<>();
+        for(int i=0;i<=4;i++){
+            list.add(Movements.M);
+        }
+        list.add(Movements.R);
+        for(int i=0;i<=4;i++){
+            list.add(Movements.M);
+        }
+        list.add(Movements.L);
+        control.makeMovements(list);
+        Assert.assertEquals(control.getMower()
+                .getCurrentPosition(), new Position(5, 5, Orientation.N));
 
     }
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void mowerFailIndexOutOfBound(){
-        MowerControlService control = newControl(0,0,Orientation.NORTH);
+    @Test(expected = IllegalArgumentException.class)
+    public void mowerFailsIllegalArgumentException() {
+        MowerControlService control = newControl(0,0);
 
-        control.makeMovements(M,M,M,M,M,M);
+        List<Movements> list = new ArrayList<>();
+        for(int i = 0; i<=6 ;i++ ){
+            list.add(Movements.M);
+        }
+        control.makeMovements(list);
     }
     @Test
-    public void testingExampleGiven() throws IOException {
+    public void testingExampleGivenWithThreads() throws IOException {
 
         File file = new File(PATHTOFILE);
-        MowerControlService control;
-        control = parseInputFile(file);
-        control.getFollowingMovements().forEach(e->control.makeMovements(e));
+        List<MowerControlService> list;
+        list = parseInputFile(file);
+
+        for (MowerControlService con : list) {
+            new Thread(() -> con.makeMovements(con.getFollowingMovements())).start();
+        }
     }
 
 
