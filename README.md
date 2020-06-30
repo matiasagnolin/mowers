@@ -15,7 +15,7 @@ First of all, make sure you have your development environment set up. If you don
 $ mvn clean compile assembly:single
 ```
 
-#### Running
+#### Running.
 
 ```bash
 $ java -jar target/seat-mowers-1.0-SNAPSHOT-jar-with-dependencies.jar -i src/main/resources/input.txt
